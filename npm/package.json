@@ -1,0 +1,32 @@
+{
+  "name": "stackget",
+  "version": "1.0.0",
+  "description": "Detect every development tool installed on your machine — CLI + GUI apps, with exact versions.",
+  "keywords": [
+    "developer-tools",
+    "environment",
+    "cli",
+    "devops",
+    "scanner",
+    "versions"
+  ],
+  "homepage": "https://github.com/sriram-ravichandran/stackget",
+  "bugs": {
+    "url": "https://github.com/sriram-ravichandran/stackget/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sriram-ravichandran/stackget.git"
+  },
+  "license": "MIT",
+  "author": "Sriram Ravichandran",
+  "bin": {
+    "stackget": "./run.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

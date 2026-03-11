@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 90" width="450" height="90">
+  <g font-family="monospace">
+    <text x="0" y="44" font-size="38" fill="#D2A8FF">⫸
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+    </text>
+    <text x="34" y="44" font-size="38" fill="#58A6FF">⫸
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" repeatCount="indefinite" begin="0.25s"/>
+    </text>
+    <text x="68" y="44" font-size="38" fill="#79C0FF">⫸
+      <animate attributeName="opacity" values="0.2;1;0.2" dur="1.5s" repeatCount="indefinite" begin="0.5s"/>
+    </text>
+    <text x="116" y="44" font-size="38" font-weight="bold" fill="#C9D1D9">StackGet</text>
+    <text x="116" y="72" font-size="16" fill="#8B949E">Developer Environment Scanner</text>
+  </g>
+</svg>
