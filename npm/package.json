@@ -21,7 +21,7 @@
   "license": "MIT",
   "author": "Sriram Ravichandran",
   "bin": {
-    "stackget": "./run.js"
+    "stackget": "run.js"
   },
   "scripts": {
     "postinstall": "node install.js"
