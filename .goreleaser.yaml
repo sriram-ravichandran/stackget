@@ -50,5 +50,5 @@ release:
     owner: sriram-ravichandran
     name: stackget
   draft: false
-  prerelease: auto
+  prerelease: false
   name_template: "v{{.Version}}"
