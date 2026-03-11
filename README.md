@@ -18,7 +18,7 @@
   </a>
   <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Platforms" />
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/sriram-ravichandran/stackget" alt="License" />
+    <img src="https://img.shields.io/badge/license-MIT-green" alt="License" />
   </a>
 </p>
 
