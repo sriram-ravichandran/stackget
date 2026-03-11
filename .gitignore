@@ -1,0 +1,41 @@
+# ── Compiled binaries ────────────────────────────────────────────────
+stackget.exe
+stackget
+stackget-*
+
+# ── Build output ─────────────────────────────────────────────────────
+dist/
+build/
+
+# ── GoReleaser artifacts ──────────────────────────────────────────────
+*.tar.gz
+*.zip
+
+# ── Scan output files ────────────────────────────────────────────────
+stackget.yaml
+stackget.yml
+stackget.json
+
+# ── npm binary download ──────────────────────────────────────────────
+npm/bin/
+
+# ── Claude AI project files ──────────────────────────────────────────
+.claude/
+
+# ── Local notes ──────────────────────────────────────────────────────
+maintainance.txt
+*.txt
+
+# ── OS clutter ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor & IDE ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Go toolchain ─────────────────────────────────────────────────────
+vendor/
