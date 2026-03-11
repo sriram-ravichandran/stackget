@@ -23,7 +23,7 @@ builds:
 archives:
   - # tar.gz for every platform — Windows 10+ ships tar, and the npm
     # install script relies on consistent extraction across all platforms.
-    format: tar.gz
+    formats: [tar.gz]
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     wrap_in_directory: false
     files:
@@ -35,7 +35,7 @@ checksum:
 
 changelog:
   sort: asc
-  use: github
+  use: git
   filters:
     exclude:
       - "^docs:"
