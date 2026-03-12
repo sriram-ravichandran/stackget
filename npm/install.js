@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-/**
- * install.js — postinstall script for the stackget npm package.
- *
- * Downloads the correct pre-built binary from the GitHub release that matches
- * this package version, extracts it into ./bin/, and makes it executable.
- *
- * Supports: macOS (x64 + arm64), Linux (x64 + arm64), Windows (x64 + arm64).
- * Requires: Node ≥ 14, system `tar` (ships with macOS, Linux, and Windows 10+).
- */
-
 "use strict";
 
 const https = require("https");
@@ -20,8 +10,6 @@ const REPO = "sriram-ravichandran/stackget";
 const VERSION = require("./package.json").version;
 const BIN_DIR = path.join(__dirname, "bin");
 
-// ─── Platform detection ───────────────────────────────────────────────────────
-
 function getPlatformInfo() {
   const platformMap = { darwin: "darwin", linux: "linux", win32: "windows" };
   const archMap = { x64: "amd64", arm64: "arm64" };
@@ -29,113 +17,94 @@ function getPlatformInfo() {
   const os = platformMap[process.platform];
   const arch = archMap[process.arch];
 
-  if (!os) {
+  if (!os || !arch) {
     throw new Error(
-      `Unsupported platform: ${process.platform}. ` +
-        "Install manually from https://github.com/" + REPO + "/releases"
-    );
-  }
-  if (!arch) {
-    throw new Error(
-      `Unsupported architecture: ${process.arch}. ` +
-        "Install manually from https://github.com/" + REPO + "/releases"
+      `Unsupported platform: ${process.platform}/${process.arch}\n` +
+      `Install manually from: https://github.com/${REPO}/releases`
     );
   }
 
   const binName = os === "windows" ? "stackget.exe" : "stackget";
   const archive = `stackget-${os}-${arch}.tar.gz`;
   const downloadUrl = `https://github.com/${REPO}/releases/download/v${VERSION}/${archive}`;
-
   return { os, arch, binName, archive, downloadUrl };
 }
 
-// ─── Download helper (follows redirects) ─────────────────────────────────────
-
 function download(url, dest) {
   return new Promise((resolve, reject) => {
-    const file = fs.createWriteStream(dest);
-
     function get(url) {
-      https
-        .get(url, { headers: { "User-Agent": "stackget-npm-installer" } }, (res) => {
-          if (res.statusCode === 301 || res.statusCode === 302) {
-            file.close();
-            // Reopen file for the redirect
-            const newFile = fs.createWriteStream(dest);
-            get(res.headers.location);
-            return;
-          }
-          if (res.statusCode !== 200) {
-            file.close();
-            fs.unlink(dest, () => {});
-            reject(new Error(`HTTP ${res.statusCode} fetching ${url}`));
-            return;
-          }
-          res.pipe(file);
-          file.on("finish", () => {
-            file.close();
-            resolve();
-          });
-          file.on("error", (err) => {
-            fs.unlink(dest, () => {});
-            reject(err);
-          });
-        })
-        .on("error", (err) => {
+      const file = fs.createWriteStream(dest);
+      https.get(url, { headers: { "User-Agent": "stackget-npm-installer" } }, (res) => {
+        if (res.statusCode === 301 || res.statusCode === 302) {
+          file.close();
+          return get(res.headers.location);
+        }
+        if (res.statusCode !== 200) {
+          file.close();
           fs.unlink(dest, () => {});
-          reject(err);
-        });
+          return reject(new Error(`HTTP ${res.statusCode} fetching ${url}`));
+        }
+        res.pipe(file);
+        file.on("finish", () => { file.close(); resolve(); });
+        file.on("error", (err) => { fs.unlink(dest, () => {}); reject(err); });
+      }).on("error", reject);
     }
-
     get(url);
   });
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// Recursively find a file by name inside a directory.
+function findFile(dir, name) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      const found = findFile(full, name);
+      if (found) return found;
+    } else if (entry.name === name) {
+      return full;
+    }
+  }
+  return null;
+}
 
 async function main() {
-  const { os, arch, binName, archive, downloadUrl } = getPlatformInfo();
+  const { os, binName, archive, downloadUrl } = getPlatformInfo();
 
   fs.mkdirSync(BIN_DIR, { recursive: true });
 
-  const tmpArchive = path.join(BIN_DIR, archive);
   const binPath = path.join(BIN_DIR, binName);
+  if (fs.existsSync(binPath)) return; // already installed
 
-  // Skip if already installed (e.g. re-running postinstall).
-  if (fs.existsSync(binPath)) {
-    return;
-  }
+  const tmpArchive = path.join(BIN_DIR, archive);
+  const tmpExtract = path.join(BIN_DIR, "_extract");
 
-  console.log(`\nDownloading stackget v${VERSION} for ${os}/${arch}...`);
+  console.log(`\nDownloading stackget v${VERSION}...`);
   console.log(`  ${downloadUrl}\n`);
 
   try {
     await download(downloadUrl, tmpArchive);
   } catch (err) {
-    console.error(`\nFailed to download stackget: ${err.message}`);
-    console.error(
-      "You can install manually from: https://github.com/" + REPO + "/releases"
-    );
+    console.error(`\nDownload failed: ${err.message}`);
+    console.error(`Install manually: https://github.com/${REPO}/releases`);
     process.exit(1);
   }
 
   try {
-    // tar is available on macOS, all Linux distros, and Windows 10+ (build 17063+).
-    execSync(`tar -xzf "${tmpArchive}" -C "${BIN_DIR}" "${binName}"`, {
-      stdio: "inherit",
-    });
+    fs.mkdirSync(tmpExtract, { recursive: true });
+    // Extract everything into a temp dir — handles both wrapped and flat archives.
+    execSync(`tar -xzf "${tmpArchive}" -C "${tmpExtract}"`, { stdio: "pipe" });
+
+    const found = findFile(tmpExtract, binName);
+    if (!found) throw new Error(`${binName} not found in archive`);
+
+    fs.copyFileSync(found, binPath);
+    if (os !== "windows") fs.chmodSync(binPath, 0o755);
   } catch (err) {
-    console.error(`\nFailed to extract archive: ${err.message}`);
-    console.error("Ensure 'tar' is available on your PATH.");
+    console.error(`\nExtraction failed: ${err.message}`);
     process.exit(1);
   } finally {
-    try {
-      fs.unlinkSync(tmpArchive);
-    } catch (_) {}
-  }
-
-  if (os !== "windows") {
-    fs.chmodSync(binPath, 0o755);
+    try { fs.unlinkSync(tmpArchive); } catch (_) {}
+    try { fs.rmSync(tmpExtract, { recursive: true, force: true }); } catch (_) {}
   }
 
   console.log(`stackget v${VERSION} installed successfully!\n`);
