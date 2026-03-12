@@ -65,18 +65,31 @@ npm install -g stackget
 
 Download the binary for your platform from the [latest release](https://github.com/sriram-ravichandran/stackget/releases/latest):
 
-| Platform       | Download |
-|----------------|----------|
-| Windows x64    | `stackget-windows-amd64.tar.gz` |
-| macOS Intel    | `stackget-darwin-amd64.tar.gz`  |
-| macOS Apple Silicon | `stackget-darwin-arm64.tar.gz` |
-| Linux x64      | `stackget-linux-amd64.tar.gz`   |
-| Linux ARM64    | `stackget-linux-arm64.tar.gz`   |
+| Platform            | Download |
+|---------------------|----------|
+| Windows x64         | `stackget-windows-amd64.tar.gz` |
+| Windows ARM64       | `stackget-windows-arm64.tar.gz` |
+| macOS Intel         | `stackget-darwin-amd64.tar.gz`  |
+| macOS Apple Silicon | `stackget-darwin-arm64.tar.gz`  |
+| Linux x64           | `stackget-linux-amd64.tar.gz`   |
+| Linux ARM64         | `stackget-linux-arm64.tar.gz`   |
 
 ```bash
-# Example: macOS Apple Silicon
+# macOS Apple Silicon
 curl -sL https://github.com/sriram-ravichandran/stackget/releases/latest/download/stackget-darwin-arm64.tar.gz | tar xz
 sudo mv stackget /usr/local/bin/
+
+# macOS Intel
+curl -sL https://github.com/sriram-ravichandran/stackget/releases/latest/download/stackget-darwin-amd64.tar.gz | tar xz
+sudo mv stackget /usr/local/bin/
+
+# Linux x64
+curl -sL https://github.com/sriram-ravichandran/stackget/releases/latest/download/stackget-linux-amd64.tar.gz | tar xz
+sudo mv stackget /usr/local/bin/
+
+# Windows (PowerShell)
+curl -sL https://github.com/sriram-ravichandran/stackget/releases/latest/download/stackget-windows-amd64.tar.gz | tar xz
+Move-Item stackget.exe $env:USERPROFILE\AppData\Local\Microsoft\WindowsApps\
 ```
 
 ### Build from source
