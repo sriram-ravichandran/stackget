@@ -430,12 +430,22 @@ var AllCategories = []Category{
 			{
 				Name:     "pgAdmin 4",
 				Commands: []string{"pgadmin4"},
-				// Windows: C:\Program Files\pgAdmin 4\runtime\pgadmin4.exe
-				//   WinHint points at the app dir → depth-2 search finds \runtime\pgadmin4.exe.
+				// Standalone installer:   C:\Program Files\pgAdmin 4\runtime\pgadmin4.exe
+				// Bundled with PostgreSQL: C:\Program Files\PostgreSQL\<ver>\pgAdmin 4\runtime\pgadmin4.exe
+				// Version-specific hints cover PostgreSQL 12–18; depth-3 finds \runtime\pgadmin4.exe.
 				// Linux: distro packages place it under /usr/pgadmin<N>/bin/
 				GUIApp: &GUIApp{
-					WinExe:     "pgadmin4.exe",
-					WinHints:   []string{`C:\Program Files\pgAdmin 4`},
+					WinExe: "pgadmin4.exe",
+					WinHints: []string{
+						`C:\Program Files\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\12\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\13\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\14\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\15\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\16\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\17\pgAdmin 4`,
+						`C:\Program Files\PostgreSQL\18\pgAdmin 4`,
+					},
 					MacApp:     "pgAdmin 4.app",
 					LinuxBin:   "pgadmin4",
 					LinuxHints: []string{"/usr/pgadmin*/bin"},
