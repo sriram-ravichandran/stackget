@@ -6,7 +6,7 @@
 
 > Detect every development tool installed on your machine — CLI + GUI apps, with exact versions.
 
-**Current version: v1.0.2**
+**Current version: v1.0.3**
 
 ## Install
 
